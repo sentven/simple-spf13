@@ -5,17 +5,17 @@ endif
 " Setting some decent VIM settings for programming
 
 set nocompatible                " vi compatible is LAME
-"set autoindent                  " set auto-indenting on for programming
-"set showmatch                   " automatically show matching brackets. works like it does in bbedit.
-"set showmode                    " show the current mode
 set visualbell                  " turn on the "visual bell" - which is much quieter than the "audio blink"
-"set ruler                       " show the cursor position all the time
-"set backspace=indent,eol,start  " make that backspace key work the way it should
 set background=dark             " Use colours that work well on a dark background (Console is usually black)
 set clipboard=unnamed           " set clipboard to unnamed to access the system clipboard under windows
 syntax on                       " turn syntax highlighting on by default
+"set autoindent                  " set auto-indenting on for programming
+"set showmatch                   " automatically show matching brackets. works like it does in bbedit.
+"set showmode                    " show the current mode
+"set ruler                       " show the cursor position all the time
+"set backspace=indent,eol,start  " make that backspace key work the way it should
 
-set laststatus=2                " make the last line where the status is two lines deep so you can see status always
+"set laststatus=2                " make the last line where the status is two lines deep so you can see status always
 " Show EOL type and last modified timestamp, right after the filename
 "set statusline=%<%F%h%m%r\ [%{&ff}]\ (%{strftime(\"%H:%M\ %d/%m/%Y\",getftime(expand(\"%:p\")))})%=%l,%c%V\ %P
 
@@ -52,7 +52,7 @@ set laststatus=2                " make the last line where the status is two lin
         " Broken down into easily includeable segments
         set statusline=%<%f\                     " Filename
         set statusline+=%w%h%m%r                 " Options
-        if !exists('g:override_spf13_bundles')
+        if isdirectory(expand("~/.vim/bundle/vim-fugitive/"))
             set statusline+=%{fugitive#statusline()} " Git Hotness
         endif
         set statusline+=\ [%{&ff}/%Y]            " Filetype
@@ -163,17 +163,21 @@ set noswapfile
 
 let mapleader=','
 
+" auto add match bracket
 inoremap ( ()<ESC>i
 inoremap [ []<ESC>i
 inoremap { {}<ESC>i
 inoremap < <><ESC>i
 inoremap " ""<ESC>i
 inoremap ' ''<ESC>i
-nnoremap <F4> :copen<CR>
+
+" Jump between split windows
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
+
+" Delete spaces at the end of line
 nnoremap <leader>ds :%s/\s\+$//g<CR>
 
 " Yank from the cursor to the end of line, to be consistent with C and D
@@ -194,8 +198,8 @@ vnoremap . :normal .<CR>
 
 " NerdTree {
     if isdirectory(expand("~/.vim/bundle/nerdtree"))
-        map <C-e> :NERDTreeToggle<CR>
-        map <leader>e :NERDTreeFind<CR>
+        map <F4> :NERDTreeToggle<CR>
+        "map <leader>e :NERDTreeFind<CR>
         nmap <leader>nt :NERDTreeFind<CR>
 
         let NERDTreeWinPos=1
@@ -213,18 +217,18 @@ vnoremap . :normal .<CR>
         let g:nerdtree_tabs_open_on_console_startup=1
         let g:NERDTreeDirArrowExpandable='►'
         let g:NERDTreeDirArrowCollapsible='▼'
-        let g:NERDTreeIndicatorMapCustom = {
-            \ "Modified"  : "✹",
-            \ "Staged"    : "✚",
-            \ "Untracked" : "✭",
-            \ "Renamed"   : "➜",
-            \ "Unmerged"  : "═",
-            \ "Deleted"   : "✖",
-            \ "Dirty"     : "✗",
-            \ "Clean"     : "✔︎",
-            \ 'Ignored'   : '☒',
-            \ "Unknown"   : "?"
-            \ }
+        "let g:NERDTreeIndicatorMapCustom = {
+            "\ "Modified"  : "✹",
+            "\ "Staged"    : "✚",
+            "\ "Untracked" : "✭",
+            "\ "Renamed"   : "➜",
+            "\ "Unmerged"  : "═",
+            "\ "Deleted"   : "✖",
+            "\ "Dirty"     : "✗",
+            "\ "Clean"     : "✔︎",
+            "\ 'Ignored'   : '☒',
+            "\ "Unknown"   : "?"
+            "\ }
     endif
 " }
 
@@ -300,13 +304,13 @@ vnoremap . :normal .<CR>
         "let g:airline#extensions#wordcount#filetypes ='lua|c|cpp|help|markdown|text'
         let g:airline_exclude_preview = 0
         let g:airline_exclude_filetypes = [] " see source for current list
-        let g:airline_theme = 'dark'
         let g:airline_powerline_fonts=1
         if !exists('g:airline_powerline_fonts')
             " Use the default set of separators with a few customizations
             let g:airline_left_sep='›'  " Slightly fancier than '>'
             let g:airline_right_sep='‹' " Slightly fancier than '<'
         endif
+        let g:airline_theme = 'dark'
         "if !exists('g:airline_theme')
             "let g:airline_theme = 'solarized'
         "endif

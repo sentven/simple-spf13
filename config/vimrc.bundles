@@ -1,6 +1,6 @@
 filetype off
 
-set rtp+=~/.vim/bundle/Vundle.vim
+set rtp+=~/.vim/bundle/vundle
 
 " vundle初始化
 call vundle#begin()
@@ -10,7 +10,7 @@ call vundle#begin()
 
 " 先clone才能使用Plugin
 " git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
-" git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+" git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/vundle
 
 " 让vundle管理插件版本,必须。" 这应该始终是第一个
 Plugin 'VundleVim/Vundle.vim'

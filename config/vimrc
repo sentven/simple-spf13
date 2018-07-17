@@ -1,0 +1,329 @@
+if filereadable(expand("~/.vimrc.bundles"))
+    source ~/.vimrc.bundles
+endif
+
+" Setting some decent VIM settings for programming
+
+set nocompatible                " vi compatible is LAME
+"set autoindent                  " set auto-indenting on for programming
+"set showmatch                   " automatically show matching brackets. works like it does in bbedit.
+"set showmode                    " show the current mode
+set visualbell                  " turn on the "visual bell" - which is much quieter than the "audio blink"
+"set ruler                       " show the cursor position all the time
+"set backspace=indent,eol,start  " make that backspace key work the way it should
+set background=dark             " Use colours that work well on a dark background (Console is usually black)
+set clipboard=unnamed           " set clipboard to unnamed to access the system clipboard under windows
+syntax on                       " turn syntax highlighting on by default
+
+set laststatus=2                " make the last line where the status is two lines deep so you can see status always
+" Show EOL type and last modified timestamp, right after the filename
+"set statusline=%<%F%h%m%r\ [%{&ff}]\ (%{strftime(\"%H:%M\ %d/%m/%Y\",getftime(expand(\"%:p\")))})%=%l,%c%V\ %P
+
+
+" Vim UI {
+
+    if filereadable(expand("~/.vim/bundle/vim-colors-solarized/colors/solarized.vim"))
+        let g:solarized_termcolors=256
+        let g:solarized_termtrans=1
+        let g:solarized_contrast="normal"
+        let g:solarized_visibility="normal"
+        "colorscheme solarized             " Load a colorscheme
+    endif
+
+    set tabpagemax=15               " Only show 15 tabs
+    set showmode                    " Display the current mode
+
+    set cursorline                  " Highlight current line
+
+    highlight clear SignColumn      " SignColumn should match background
+    highlight clear LineNr          " Current line number row will have same background color in relative mode
+    "highlight clear CursorLineNr    " Remove highlight color from current line number
+
+    if has('cmdline_info')
+        set ruler                   " Show the ruler
+        set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%) " A ruler on steroids
+        set showcmd                 " Show partial commands in status line and
+                                    " Selected characters/lines in visual mode
+    endif
+
+    if has('statusline')
+        set laststatus=2
+
+        " Broken down into easily includeable segments
+        set statusline=%<%f\                     " Filename
+        set statusline+=%w%h%m%r                 " Options
+        if !exists('g:override_spf13_bundles')
+            set statusline+=%{fugitive#statusline()} " Git Hotness
+        endif
+        set statusline+=\ [%{&ff}/%Y]            " Filetype
+        set statusline+=\ [%{getcwd()}]          " Current dir
+        set statusline+=%=%-14.(%l,%c%V%)\ %p%%  " Right aligned file nav info
+    endif
+
+    set backspace=indent,eol,start  " Backspace for dummies
+    set linespace=0                 " No extra spaces between rows
+    set number                      " Line numbers on
+    set showmatch                   " Show matching brackets/parenthesis
+    set incsearch                   " Find as you type search
+    set hlsearch                    " Highlight search terms
+    set winminheight=0              " Windows can be 0 line high
+    set ignorecase                  " Case insensitive search
+    set smartcase                   " Case sensitive when uc present
+    set wildmenu                    " Show list instead of just completing
+    set wildmode=list:longest,full  " Command <Tab> completion, list matches, then longest common part, then all.
+    set whichwrap=b,s,h,l,<,>,[,]   " Backspace and cursor keys wrap too
+    set scrolljump=5                " Lines to scroll when cursor leaves screen
+    set scrolloff=3                 " Minimum lines to keep above and below cursor
+    set foldenable                  " Auto fold code
+    set list
+    set listchars=tab:›\ ,trail:•,extends:#,nbsp:. " Highlight problematic whitespace
+
+" }
+
+" Formatting {
+
+    set nowrap                      " Do not wrap long lines
+    set autoindent                  " Indent at the same level of the previous line
+    set shiftwidth=4                " Use indents of 4 spaces
+    "set expandtab                   " Tabs are spaces, not tabs
+    set tabstop=4                   " An indentation every four columns
+    set softtabstop=4               " Let backspace delete indent
+    set nojoinspaces                " Prevents inserting two spaces after punctuation on a join (J)
+    set splitright                  " Puts new vsplit windows to the right of the current
+    set splitbelow                  " Puts new split windows to the bottom of the current
+    "set matchpairs+=<:>             " Match, to be used with %
+    set pastetoggle=<F12>           " pastetoggle (sane indentation on pastes)
+    "set comments=sl:/*,mb:*,elx:*/  " auto format comment blocks
+    " Remove trailing whitespaces and ^M chars
+    " To disable the stripping of whitespace, add the following to your
+    " .vimrc.before.local file:
+    "   let g:spf13_keep_trailing_whitespace = 1
+    autocmd FileType c,cpp,java,go,php,javascript,puppet,python,rust,twig,xml,yml,perl,sql autocmd BufWritePre <buffer> if !exists('g:spf13_keep_trailing_whitespace') | call StripTrailingWhitespace() | endif
+    "autocmd FileType go autocmd BufWritePre <buffer> Fmt
+    autocmd BufNewFile,BufRead *.html.twig set filetype=html.twig
+    autocmd FileType haskell,puppet,ruby,yml setlocal expandtab shiftwidth=2 softtabstop=2
+    " preceding line best in a plugin but here for now.
+
+    autocmd BufNewFile,BufRead *.coffee set filetype=coffee
+
+    " Workaround vim-commentary for Haskell
+    autocmd FileType haskell setlocal commentstring=--\ %s
+    " Workaround broken colour highlighting in Haskell
+    autocmd FileType haskell,rust setlocal nospell
+
+" }
+
+"------------------------------------------------------------------------------
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+    "Set UTF-8 as the default encoding for commit messages
+    autocmd BufReadPre COMMIT_EDITMSG,MERGE_MSG,git-rebase-todo setlocal fileencodings=utf-8
+
+    "Remember the positions in files with some git-specific exceptions"
+    autocmd BufReadPost *
+      \ if line("'\"") > 0 && line("'\"") <= line("$")
+      \           && expand("%") !~ "COMMIT_EDITMSG"
+      \           && expand("%") !~ "MERGE_EDITMSG"
+      \           && expand("%") !~ "ADD_EDIT.patch"
+      \           && expand("%") !~ "addp-hunk-edit.diff"
+      \           && expand("%") !~ "git-rebase-todo" |
+      \   exe "normal g`\"" |
+      \ endif
+
+      autocmd BufNewFile,BufRead *.patch set filetype=diff
+      autocmd BufNewFile,BufRead *.diff set filetype=diff
+
+      autocmd Syntax diff
+      \ highlight WhiteSpaceEOL ctermbg=red |
+      \ match WhiteSpaceEOL /\(^+.*\)\@<=\s\+$/
+
+      autocmd Syntax gitcommit setlocal textwidth=74
+endif " has("autocmd")
+
+"------------------------------------------------------------------------------
+" My config here
+set mouse=a
+"set termguicolors
+set t_Co=256
+"colorscheme goldenrod
+colorscheme neodark
+"colorscheme monokai
+"colorscheme molokai
+
+set cindent
+set smartindent
+filetype indent on
+"set foldmethod=syntax
+
+set smarttab                     " use tab at begin of line or para
+set noexpandtab
+
+set nobackup
+set noswapfile
+
+let mapleader=','
+
+inoremap ( ()<ESC>i
+inoremap [ []<ESC>i
+inoremap { {}<ESC>i
+inoremap < <><ESC>i
+inoremap " ""<ESC>i
+inoremap ' ''<ESC>i
+nnoremap <F4> :copen<CR>
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+nnoremap <leader>ds :%s/\s\+$//g<CR>
+
+" Yank from the cursor to the end of line, to be consistent with C and D
+nnoremap Y y$
+
+" Find merge conflict markers
+map <leader>fc /\v^[<\|=>]( .*\|$)<CR>
+
+" Change working directory to that of current file
+cmap cwd lcd %:p:h
+cmap cd. lcd %:p:h
+
+" Allow using the repeat operation with a visual selection
+vnoremap . :normal .<CR>
+
+"------------------------------------------------
+" From here plugin config
+
+" NerdTree {
+    if isdirectory(expand("~/.vim/bundle/nerdtree"))
+        map <C-e> :NERDTreeToggle<CR>
+        map <leader>e :NERDTreeFind<CR>
+        nmap <leader>nt :NERDTreeFind<CR>
+
+        let NERDTreeWinPos=1
+        let NERDTreeChDirMode=0
+        let NERDTreeQuitOnOpen=1
+        let NERDTreeMouseMode=2
+        let NERDTreeShowHidden=0
+        let NERDTreeAutoCenter=1
+        let NERDTreeKeepTreeInNewTab=1
+        let NERDTreeShowBookmarks=1
+        let NERDTreeShowLineNumbers=1
+        let NERDTreeWinSize=30 " 设置宽度
+        let NERDTreeIgnore=['\.py[cd]$', '\~$', '\.swo$', '\.swp$', '^\.git$', '^\.hg$', '^\.svn$', '\.bzr$']
+        let g:nerdtree_tabs_open_on_gui_startup=0
+        let g:nerdtree_tabs_open_on_console_startup=1
+        let g:NERDTreeDirArrowExpandable='►'
+        let g:NERDTreeDirArrowCollapsible='▼'
+        let g:NERDTreeIndicatorMapCustom = {
+            \ "Modified"  : "✹",
+            \ "Staged"    : "✚",
+            \ "Untracked" : "✭",
+            \ "Renamed"   : "➜",
+            \ "Unmerged"  : "═",
+            \ "Deleted"   : "✖",
+            \ "Dirty"     : "✗",
+            \ "Clean"     : "✔︎",
+            \ 'Ignored'   : '☒',
+            \ "Unknown"   : "?"
+            \ }
+    endif
+" }
+
+" Tabularize {
+    if isdirectory(expand("~/.vim/bundle/tabular"))
+        nmap <Leader>a& :Tabularize /&<CR>
+        vmap <Leader>a& :Tabularize /&<CR>
+        nmap <Leader>a= :Tabularize /^[^=]*\zs=<CR>
+        vmap <Leader>a= :Tabularize /^[^=]*\zs=<CR>
+        nmap <Leader>a=> :Tabularize /=><CR>
+        vmap <Leader>a=> :Tabularize /=><CR>
+        nmap <Leader>a: :Tabularize /:<CR>
+        vmap <Leader>a: :Tabularize /:<CR>
+        nmap <Leader>a:: :Tabularize /:\zs<CR>
+        vmap <Leader>a:: :Tabularize /:\zs<CR>
+        nmap <Leader>a, :Tabularize /,<CR>
+        vmap <Leader>a, :Tabularize /,<CR>
+        nmap <Leader>a,, :Tabularize /,\zs<CR>
+        vmap <Leader>a,, :Tabularize /,\zs<CR>
+        nmap <Leader>a<Bar> :Tabularize /<Bar><CR>
+        vmap <Leader>a<Bar> :Tabularize /<Bar><CR>
+    endif
+" }
+
+" TagBar {
+    if isdirectory(expand("~/.vim/bundle/tagbar/"))
+        "nnoremap <silent> <leader>tt :TagbarToggle<CR>
+        nmap <F3> :TagbarToggle<CR>
+        let g:tagbar_width=30 "tagbar window width
+        let g:tagbar_left=1
+        "如果是c,cpp,lua程序的话，tagbar自动开启
+        "autocmd BufReadPost *.lua,*.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
+    endif
+"}
+
+" Fugitive {
+    if isdirectory(expand("~/.vim/bundle/vim-fugitive/"))
+        nnoremap <silent> <leader>gs :Gstatus<CR>
+        nnoremap <silent> <leader>gd :Gdiff<CR>
+        nnoremap <silent> <leader>gc :Gcommit<CR>
+        nnoremap <silent> <leader>gb :Gblame<CR>
+        nnoremap <silent> <leader>gl :Glog<CR>
+        nnoremap <silent> <leader>gp :Git push<CR>
+        nnoremap <silent> <leader>gr :Gread<CR>
+        nnoremap <silent> <leader>gw :Gwrite<CR>
+        nnoremap <silent> <leader>ge :Gedit<CR>
+        " Mnemonic _i_nteractive
+        nnoremap <silent> <leader>gi :Git add -p %<CR>
+        nnoremap <silent> <leader>gg :SignifyToggle<CR>
+    endif
+"}
+
+" SuperTab {
+    let g:SuperTabRetainCompletionType=2
+    "0 - 不记录上次的补全方式
+    "1 - 记住上次的补全方式,直到用其他的补全命令改变它
+    "2 - 记住上次的补全方式,直到按ESC退出插入模式为止
+    let g:SuperTabDefaultCompletionType = "<c-n>"
+" }
+
+" vim-airline {
+    " Set configuration options for the statusline plugin vim-airline.
+    " Use the powerline theme and optionally enable powerline symbols.
+    " To use the symbols , , , , , , and .in the statusline segments add the following to your .vimrc file:
+    "   let g:airline_powerline_fonts=1
+    " If the previous symbols do not render for you then install a powerline enabled font.
+
+    " See `:echo g:airline_theme_map` for some more choices
+    " Default in terminal vim is 'dark'
+    if isdirectory(expand("~/.vim/bundle/vim-airline-themes/"))
+        let g:airline#extensions#tabline#enabled = 1
+        let g:airline#extensions#wordcount#enabled = 1
+        "let g:airline#extensions#wordcount#filetypes ='lua|c|cpp|help|markdown|text'
+        let g:airline_exclude_preview = 0
+        let g:airline_exclude_filetypes = [] " see source for current list
+        let g:airline_theme = 'dark'
+        let g:airline_powerline_fonts=1
+        if !exists('g:airline_powerline_fonts')
+            " Use the default set of separators with a few customizations
+            let g:airline_left_sep='›'  " Slightly fancier than '>'
+            let g:airline_right_sep='‹' " Slightly fancier than '<'
+        endif
+        "if !exists('g:airline_theme')
+            "let g:airline_theme = 'solarized'
+        "endif
+    endif
+" }
+
+" Functions
+" Strip whitespace
+function! StripTrailingWhitespace()
+    " Preparation: save last search, and cursor position
+    let _s=@/
+    let l = line(".")
+    let c = col(".")
+    %s/\s\+$//e
+    " clean up: restore previous search history, and cusor position
+    let @/=_s
+    call cursor(l, c)
+endfunction
+
+

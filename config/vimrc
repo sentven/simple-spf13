@@ -249,7 +249,7 @@ nnoremap <F12> :cclose<CR>
             "\ "Deleted"   : "✖",
             "\ "Dirty"     : "✗",
             "\ "Clean"     : "✔︎",
-            "\ 'Ignored'   : '☒',
+            "\ "Ignored"   : "☒",
             "\ "Unknown"   : "?"
             "\ }
     endif
@@ -309,7 +309,7 @@ nnoremap <F12> :cclose<CR>
     "0 - 不记录上次的补全方式
     "1 - 记住上次的补全方式,直到用其他的补全命令改变它
     "2 - 记住上次的补全方式,直到按ESC退出插入模式为止
-    let g:SuperTabDefaultCompletionType = "<c-n>"
+	let g:SuperTabDefaultCompletionType = "<c-n>"
 " }
 
 " vim-airline {
@@ -339,6 +339,21 @@ nnoremap <F12> :cclose<CR>
         "endif
     endif
 " }
+
+" vim-multiple-cursors {
+    let g:multi_cursor_use_default_mapping = 0
+
+    " Default mapping
+    let g:multi_cursor_start_word_key      = '<C-n>'
+    let g:multi_cursor_select_all_word_key = '<A-n>'
+    let g:multi_cursor_start_key           = 'g<C-n>'
+    let g:multi_cursor_select_all_key      = 'g<A-n>'
+    let g:multi_cursor_next_key            = '<C-n>'
+    let g:multi_cursor_prev_key            = '<C-p>'
+    let g:multi_cursor_skip_key            = '<C-x>'
+    let g:multi_cursor_quit_key            = '<Esc>'
+" }
+
 
 " Functions
 " Strip whitespace

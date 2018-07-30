@@ -141,7 +141,8 @@ if has("autocmd")
 endif " has("autocmd")
 
 "------------------------------------------------------------------------------
-" My config here
+" my config here
+
 set mouse=a
 "set termguicolors
 set t_Co=256
@@ -167,18 +168,34 @@ let mapleader=','
 inoremap ( ()<ESC>i
 inoremap [ []<ESC>i
 inoremap { {}<ESC>i
-inoremap < <><ESC>i
 inoremap " ""<ESC>i
 inoremap ' ''<ESC>i
 
-" Jump between split windows
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-h> <C-w>h
-nnoremap <C-l> <C-w>l
+" Easier moving in tabs and windows
+"   let g:spf13_no_easyWindows = 1
+if !exists('g:spf13_no_easyWindows')
+    map <C-J> <C-W>j<C-W>_
+    map <C-K> <C-W>k<C-W>_
+    map <C-L> <C-W>l<C-W>_
+    map <C-H> <C-W>h<C-W>_
+endif
 
-" Delete spaces at the end of line
-nnoremap <leader>ds :%s/\s\+$//g<CR>
+" Wrapped lines goes down/up to next row, rather than next line in file.
+noremap j gj
+noremap k gk
+
+" Most prefer to toggle search highlighting rather than clear the current
+" search results. To clear search highlighting rather than toggle it on
+" and off, add the following to your .vimrc.before.local file:
+   let g:spf13_clear_search_highlight = 1
+if exists('g:spf13_clear_search_highlight')
+    nmap <silent> <leader>/ :nohlsearch<CR>
+else
+    nmap <silent> <leader>/ :set invhlsearch<CR>
+endif
+
+" Remove spaces at the end of line
+nnoremap <leader>rs :%s/\s\+$//g<CR>
 
 " Yank from the cursor to the end of line, to be consistent with C and D
 nnoremap Y y$
@@ -192,6 +209,12 @@ cmap cd. lcd %:p:h
 
 " Allow using the repeat operation with a visual selection
 vnoremap . :normal .<CR>
+
+" QuickFix next, prev and open, close
+nnoremap <F9> :cnext<CR>
+nnoremap <F10> :cprevious<CR>
+nnoremap <F11> :copen<CR>
+nnoremap <F12> :cclose<CR>
 
 "------------------------------------------------
 " From here plugin config

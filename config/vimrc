@@ -147,7 +147,10 @@ set mouse=a
 "set termguicolors
 set t_Co=256
 "colorscheme goldenrod
-colorscheme neodark
+"colorscheme neodark
+"colorscheme slate
+"colorscheme vividchalk
+colorscheme gruvbox
 "colorscheme monokai
 "colorscheme molokai
 

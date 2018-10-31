@@ -14,4 +14,7 @@ neodark
 goldenrod
 solarized
 molokai
+slate
+vividchalk
+gruvbox
 
